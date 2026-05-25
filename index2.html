@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeopardy: Globala målet 2</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            earth: {
+              50: '#fcfbf7', 100: '#f3f0e6', 200: '#e6dfcc', 300: '#d5caaa',
+              400: '#beb185', 500: '#a79563', 600: '#8f7b4b', 700: '#75623b',
+              800: '#5c4d30', 900: '#4a3e28', 950: '#2b2417',
+            },
+            forest: {
+              50: '#f2f7f4', 100: '#e1ede6', 200: '#c5dbcf', 300: '#9cbfae',
+              400: '#6f9d87', 500: '#4e806a', 600: '#3c6654', 700: '#325244',
+              800: '#2a4339', 900: '#243930', 950: '#11201b',
+            },
+            clay: {
+              50: '#fdf8f5', 100: '#fbeee6', 200: '#f5dacb', 300: '#ebbca2',
+              400: '#de9673', 500: '#d2764f', 600: '#c45e3b', 700: '#a34b2f',
+              800: '#833e29', 900: '#6a3424', 950: '#391a11',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    h1, h2, h3, .serif-font { font-family: 'Playfair Display', serif; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f3f0e6; }
+    ::-webkit-scrollbar-thumb { background: #c5dbcf; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9cbfae; }
+  </style>
+</head>
+<body class="bg-earth-100 text-stone-800 min-h-screen flex flex-col justify-between selection:bg-forest-200">
+
+  <header class="bg-forest-950 text-earth-100 py-4 px-6 shadow-md border-b-4 border-clay-600">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-clay-600 text-white p-2.5 rounded-xl shadow-inner font-extrabold text-2xl tracking-tight">2</div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold tracking-wide">Mål 2: Ingen Hunger</h1>
+          <p class="text-xs text-forest-300 tracking-wider uppercase font-semibold">Klassrum-Jeopardy för årskurs 6</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="openInfoModal()" class="bg-forest-800 hover:bg-forest-700 text-earth-100 px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-forest-700 shadow-sm flex items-center gap-2">
+          <span>📖</span> Studiematerial
+        </button>
+        <button onclick="resetGame()" class="bg-clay-700 hover:bg-clay-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-clay-800 shadow-sm flex items-center gap-2">
+          <span>🔄</span> Starta om spelet
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow flex flex-col gap-6">
+
+    <div id="intro-screen" class="bg-earth-50 rounded-2xl p-6 md:p-8 shadow-md border border-earth-200 max-w-4xl mx-auto my-auto">
+      <div class="text-center mb-6">
+        <span class="text-5xl">🌾</span>
+        <h2 class="text-3xl font-bold text-forest-900 mt-2">Välkomna till Globala Målet 2-Jeopardy!</h2>
+        <p class="text-stone-600 mt-2 max-w-lg mx-auto">Det här spelet handlar om att stoppa hungern, uppnå tryggad livsmedelsförsörjning, förbättra nutritionen och främja ett hållbart jordbruk till år 2030.</p>
+      </div>
+
+      <div class="bg-forest-50 border-l-4 border-forest-600 p-4 rounded-r-xl mb-6 text-sm text-forest-950">
+        <h3 class="font-bold text-base mb-1">💡 Tips inför spelet (Flerlagspoäng aktiverat):</h3>
+        <p class="mb-2">Frågorna i det här spelet är lite klurigare än vanligt! Spelledaren kan nu dela ut poäng till **flera lag på samma fråga** innan rutan stängs.</p>
+        <p class="font-semibold">De fyra tävlande lagen är: <span class="text-amber-700">🥔 Potatis</span>, <span class="text-red-600">🍅 Tomat</span>, <span class="text-pink-600">🌸 Hallon</span> och <span class="text-rose-500">🍓 Jordgubbe</span>!</p>
+      </div>
+
+      <div class="flex justify-center">
+        <button onclick="startGame()" class="bg-forest-700 hover:bg-forest-600 text-white text-lg font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-3">
+          Starta utmaningen! 🚀
+        </button>
+      </div>
+    </div>
+
+    <div id="game-container" class="hidden flex-col gap-6">
+      
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all hover:shadow-md">
+          <div class="absolute -right-2 -top-2 opacity-15 text-6xl select-none">🥔</div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🥔</span>
+            <span class="font-extrabold text-amber-900 tracking-wide uppercase text-sm">Lag Potatis</span>
+          </div>
+          <div class="flex items-baseline justify-between mt-3">
+            <span class="text-3xl font-black text-amber-950" id="score-potatis">0</span>
+            <span class="text-xs text-amber-700 font-bold">poäng</span>
+          </div>
+          <div class="flex gap-1 mt-3">
+            <button onclick="adjustScore('potatis', -50)" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs py-1.5 rounded-lg font-bold transition-colors">-50</button>
+            <button onclick="adjustScore('potatis', 50)" class="flex-1 bg-amber-200 hover:bg-amber-300 text-amber-900 text-xs py-1.5 rounded-lg font-bold transition-colors">+50</button>
+          </div>
+        </div>
+
+        <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all hover:shadow-md">
+          <div class="absolute -right-2 -top-2 opacity-15 text-6xl select-none">🍅</div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🍅</span>
+            <span class="font-extrabold text-red-900 tracking-wide uppercase text-sm">Lag Tomat</span>
+          </div>
+          <div class="flex items-baseline justify-between mt-3">
+            <span class="text-3xl font-black text-red-950" id="score-tomat">0</span>
+            <span class="text-xs text-red-700 font-bold">poäng</span>
+          </div>
+          <div class="flex gap-1 mt-3">
+            <button onclick="adjustScore('tomat', -50)" class="flex-1 bg-red-100 hover:bg-red-200 text-red-800 text-xs py-1.5 rounded-lg font-bold transition-colors">-50</button>
+            <button onclick="adjustScore('tomat', 50)" class="flex-1 bg-red-200 hover:bg-red-300 text-red-900 text-xs py-1.5 rounded-lg font-bold transition-colors">+50</button>
+          </div>
+        </div>
+
+        <div class="bg-pink-50 border-2 border-pink-200 rounded-2xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all hover:shadow-md">
+          <div class="absolute -right-2 -top-2 opacity-15 text-6xl select-none">🌸</div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🌸</span>
+            <span class="font-extrabold text-pink-900 tracking-wide uppercase text-sm">Lag Hallon</span>
+          </div>
+          <div class="flex items-baseline justify-between mt-3">
+            <span class="text-3xl font-black text-pink-950" id="score-hallon">0</span>
+            <span class="text-xs text-pink-700 font-bold">poäng</span>
+          </div>
+          <div class="flex gap-1 mt-3">
+            <button onclick="adjustScore('hallon', -50)" class="flex-1 bg-pink-100 hover:bg-pink-200 text-pink-800 text-xs py-1.5 rounded-lg font-bold transition-colors">-50</button>
+            <button onclick="adjustScore('hallon', 50)" class="flex-1 bg-pink-200 hover:bg-pink-300 text-pink-900 text-xs py-1.5 rounded-lg font-bold transition-colors">+50</button>
+          </div>
+        </div>
+
+        <div class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all hover:shadow-md">
+          <div class="absolute -right-2 -top-2 opacity-15 text-6xl select-none">🍓</div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🍓</span>
+            <span class="font-extrabold text-rose-900 tracking-wide uppercase text-sm">Lag Jordgubbe</span>
+          </div>
+          <div class="flex items-baseline justify-between mt-3">
+            <span class="text-3xl font-black text-rose-950" id="score-jordgubbe">0</span>
+            <span class="text-xs text-rose-700 font-bold">poäng</span>
+          </div>
+          <div class="flex gap-1 mt-3">
+            <button onclick="adjustScore('jordgubbe', -50)" class="flex-1 bg-rose-100 hover:bg-rose-200 text-rose-800 text-xs py-1.5 rounded-lg font-bold transition-colors">-50</button>
+            <button onclick="adjustScore('jordgubbe', 50)" class="flex-1 bg-rose-200 hover:bg-rose-300 text-rose-900 text-xs py-1.5 rounded-lg font-bold transition-colors">+50</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-earth-50 p-4 md:p-6 rounded-2xl shadow-md border border-earth-200 overflow-x-auto">
+        <div class="min-w-[700px]">
+          <div class="grid grid-cols-5 gap-3 mb-4">
+            <div class="bg-forest-900 text-earth-50 p-3 rounded-xl text-center shadow-sm flex flex-col justify-center items-center h-20 border border-forest-800">
+              <span class="text-lg">🎯</span>
+              <span class="text-xs md:text-sm font-bold tracking-tight mt-0.5 line-clamp-2">Målet & 2030</span>
+            </div>
+            <div class="bg-forest-900 text-earth-50 p-3 rounded-xl text-center shadow-sm flex flex-col justify-center items-center h-20 border border-forest-800">
+              <span class="text-lg">🚜</span>
+              <span class="text-xs md:text-sm font-bold tracking-tight mt-0.5 line-clamp-2">Hållbart Jordbruk</span>
+            </div>
+            <div class="bg-forest-900 text-earth-50 p-3 rounded-xl text-center shadow-sm flex flex-col justify-center items-center h-20 border border-forest-800">
+              <span class="text-lg">🍎</span>
+              <span class="text-xs md:text-sm font-bold tracking-tight mt-0.5 line-clamp-2">Matsvinn & Konsumtion</span>
+            </div>
+            <div class="bg-forest-900 text-earth-50 p-3 rounded-xl text-center shadow-sm flex flex-col justify-center items-center h-20 border border-forest-800">
+              <span class="text-lg">🧬</span>
+              <span class="text-xs md:text-sm font-bold tracking-tight mt-0.5 line-clamp-2">Näring & Kroppen</span>
+            </div>
+            <div class="bg-forest-900 text-earth-50 p-3 rounded-xl text-center shadow-sm flex flex-col justify-center items-center h-20 border border-forest-800">
+              <span class="text-lg">🌍</span>
+              <span class="text-xs md:text-sm font-bold tracking-tight mt-0.5 line-clamp-2">Globala Utmaningen</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-5 gap-3" id="jeopardy-board"></div>
+        </div>
+      </div>
+
+      <div class="bg-earth-200/50 rounded-xl p-4 flex flex-col md:flex-row justify-between items-center text-sm text-stone-600 border border-earth-300 gap-3">
+        <div class="flex items-center gap-2">
+          <span>🌿</span>
+          <span>Spelinstruktioner: Klicka på en poängruta. Du kan ge poäng till flera lag per fråga! Klicka på "Klar" när du vill stänga frågan.</span>
+        </div>
+        <div class="font-bold text-forest-900" id="progress-text">0 av 25 frågor besvarade</div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="bg-stone-900 text-stone-400 py-6 px-6 border-t border-stone-800 text-center text-xs mt-12">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <p>© Agenda 2030 - Globala målen i skolan. Skapat för 12-åriga naturforskare och samhällsmedborgare.</p>
+      <div class="flex gap-4">
+        <span class="hover:text-earth-200 transition-colors cursor-help" onclick="openInfoModal()">Information om Mål 2</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="question-modal" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-earth-50 rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl border border-earth-200 transform scale-95 transition-all duration-200 flex flex-col" id="modal-content">
+      
+      <div class="bg-forest-900 text-earth-100 p-5 flex justify-between items-center border-b border-forest-850">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-clay-400" id="modal-category-text">KATEGORI</span>
+          <h3 class="text-xl font-bold" id="modal-value-text">Fråga för X Poäng</h3>
+        </div>
+        <button onclick="closeQuestionModal()" class="text-earth-200 hover:text-white bg-forest-800 hover:bg-forest-700 w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-colors">&times;</button>
+      </div>
+
+      <div class="p-6 md:p-8 flex-grow">
+        <div class="mb-6">
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">Fråga:</p>
+          <p class="text-lg md:text-xl font-bold text-stone-900 leading-relaxed" id="modal-question-text">Här hamnar frågetexten...</p>
+        </div>
+
+        <div id="answer-container" class="hidden mb-6 bg-forest-50 border border-forest-200 rounded-xl p-5">
+          <p class="text-xs font-semibold uppercase tracking-wider text-forest-700 mb-1">Facit / Rätt svar:</p>
+          <p class="text-base font-bold text-forest-900 leading-relaxed" id="modal-answer-text">Här hamnar svaret...</p>
+        </div>
+
+        <div id="assign-points-section" class="border-t border-earth-200 pt-5">
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500 mb-3 text-center">Klicka på alla lag som svarade RÄTT (ger poäng)</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+            <button onclick="rewardTeam('potatis')" class="bg-amber-100 hover:bg-amber-200 text-amber-900 p-2 rounded-xl text-xs font-bold transition-all border border-amber-300 flex flex-col items-center gap-1 active:scale-95">
+              <span>🥔</span> Potatis
+            </button>
+            <button onclick="rewardTeam('tomat')" class="bg-red-100 hover:bg-red-200 text-red-900 p-2 rounded-xl text-xs font-bold transition-all border border-red-300 flex flex-col items-center gap-1 active:scale-95">
+              <span>🍅</span> Tomat
+            </button>
+            <button onclick="rewardTeam('hallon')" class="bg-pink-100 hover:bg-pink-200 text-pink-900 p-2 rounded-xl text-xs font-bold transition-all border border-pink-300 flex flex-col items-center gap-1 active:scale-95">
+              <span>🌸</span> Hallon
+            </button>
+            <button onclick="rewardTeam('jordgubbe')" class="bg-rose-100 hover:bg-rose-200 text-rose-900 p-2 rounded-xl text-xs font-bold transition-all border border-rose-300 flex flex-col items-center gap-1 active:scale-95">
+              <span>🍓</span> Jordgubbe
+            </button>
+          </div>
+          
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-500 mb-3 text-center">... eller klicka för att dra av poäng vid FEL svar</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button onclick="penalizeTeam('potatis')" class="bg-stone-100 hover:bg-red-50 hover:text-red-900 hover:border-red-300 text-stone-600 p-1.5 rounded-lg text-[10px] font-bold transition-all border border-stone-200">Minska Potatis</button>
+            <button onclick="penalizeTeam('tomat')" class="bg-stone-100 hover:bg-red-50 hover:text-red-900 hover:border-red-300 text-stone-600 p-1.5 rounded-lg text-[10px] font-bold transition-all border border-stone-200">Minska Tomat</button>
+            <button onclick="penalizeTeam('hallon')" class="bg-stone-100 hover:bg-red-50 hover:text-red-900 hover:border-red-300 text-stone-600 p-1.5 rounded-lg text-[10px] font-bold transition-all border border-stone-200">Minska Hallon</button>
+            <button onclick="penalizeTeam('jordgubbe')" class="bg-stone-100 hover:bg-red-50 hover:text-red-900 hover:border-red-300 text-stone-600 p-1.5 rounded-lg text-[10px] font-bold transition-all border border-stone-200">Minska Jordgubbe</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-earth-100 p-4 border-t border-earth-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <button id="show-answer-btn" onclick="toggleAnswer()" class="w-full sm:w-auto bg-forest-700 hover:bg-forest-600 text-white font-bold px-6 py-2.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+          <span>👁️</span> Visa Facit
+        </button>
+        <button onclick="markAsPlayed()" class="w-full sm:w-auto bg-stone-700 hover:bg-stone-600 text-earth-100 font-bold px-6 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md hover:bg-stone-800">
+          <span>✓</span> Klar (Markera som spelad)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="info-modal" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-earth-50 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-earth-200 flex flex-col">
+      <div class="bg-forest-950 text-earth-100 p-5 flex justify-between items-center sticky top-0 border-b border-forest-900">
+        <h3 class="text-xl font-bold flex items-center gap-2"><span>📖</span> Studiematerial: Globala Målet 2</h3>
+        <button onclick="closeInfoModal()" class="text-earth-200 hover:text-white bg-forest-900 hover:bg-forest-800 w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-colors">&times;</button>
+      </div>
+      <div class="p-6 md:p-8 space-y-6 text-stone-700 text-sm md:text-base">
+        <div>
+          <h4 class="font-extrabold text-forest-900 text-lg mb-2">Vad handlar Globala målet 2 egentligen om?</h4>
+          <p class="leading-relaxed">Det kallas "Ingen hunger" men målet handlar om mycket mer än att bara se till att alla får tillräckligt med kalorier. Det fokuserar på tre viktiga områden:</p>
+          <ul class="list-disc pl-5 mt-2 space-y-2">
+            <li><strong>Tryggad livsmedelsförsörjning:</strong> Att alla människor ska ha tillgång till bra och säker mat.</li>
+            <li><strong>Bättre näring (nutrition):</strong> Att stoppa felnäring, som "dold hunger".</li>
+            <li><strong>Hållbart jordbruk:</strong> Hur vi odlar utan att skada miljön.</li>
+          </ul>
+        </div>
+        <div class="bg-clay-50 border border-clay-200 rounded-xl p-4">
+          <h4 class="font-extrabold text-clay-800 text-base mb-1">Visste du att...?</h4>
+          <p class="text-xs md:text-sm text-stone-600 leading-relaxed">Ungefär en tredjedel av all mat som produceras i världen slängs. Det mesta av matsvinnet i Sverige sker faktiskt hemma i våra egna kök!</p>
+        </div>
+        <div class="flex justify-end pt-2">
+          <button onclick="closeInfoModal()" class="bg-forest-700 hover:bg-forest-600 text-white font-bold px-6 py-2.5 rounded-xl transition-all">Jag förstår, stäng guiden!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="winner-modal" class="fixed inset-0 bg-stone-900/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-earth-50 rounded-3xl p-8 max-w-lg w-full text-center shadow-2xl border-4 border-forest-600 relative overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(#4e806a_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      <span class="text-7xl block animate-bounce mb-4">🏆</span>
+      <h3 class="text-3xl font-black text-forest-950 mb-1">Spelet är avslutat!</h3>
+      <p class="text-stone-500 text-sm mb-6">Bra kämpat alla lag. Tillsammans har ni lärt er mer om hur vi räddar vår planet!</p>
+      <div class="bg-forest-50 rounded-2xl p-6 border border-forest-150 mb-6 shadow-inner">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-forest-600 mb-4">Slutställning</h4>
+        <div class="space-y-3" id="final-scoreboard"></div>
+      </div>
+      <button onclick="resetGame()" class="bg-clay-600 hover:bg-clay-500 text-white font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full">Spela igen 🔄</button>
+    </div>
+  </div>
+
+  <script>
+    // Audio
+    let audioCtx = null;
+    function playTone(freq, type, duration) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+    function playSuccessSound() { playTone(523.25, 'sine', 0.1); setTimeout(() => playTone(659.25, 'sine', 0.15), 100); setTimeout(() => playTone(783.99, 'sine', 0.3), 200); }
+    function playErrorSound() { playTone(220, 'sawtooth', 0.15); setTimeout(() => playTone(196, 'sawtooth', 0.3), 150); }
+    function playClickSound() { playTone(400, 'triangle', 0.05); }
+
+    // State
+    let scores = { potatis: 0, tomat: 0, hallon: 0, jordgubbe: 0 };
+    let playedQuestions = {};
+    let activeQuestion = null;
+
+    // Questions Data
+    const jeopardyData = [
+      {
+        category: "Målet & 2030",
+        questions: [
+          { points: 100, q: "Vilket årtal ska de globala målen vara uppnådda?", a: "År 2030." },
+          { points: 200, q: "Hur många Globala mål finns det totalt?", a: "17 globala mål." },
+          { points: 300, q: "Mål 2 handlar om hunger, samt vilka andra två områden?", a: "Förbättrad nutrition (näring) och hållbart jordbruk." },
+          { points: 400, q: "Vad kallas tillståndet när ett land har mat för alla medborgare?", a: "Livsmedelstrygghet." },
+          { points: 500, q: "Vilket mål samarbetar starkt med Mål 2 för bönders rättvisa priser?", a: "Mål 8 (Anständiga arbetsvillkor) eller Mål 12 (Hållbar konsumtion)." }
+        ]
+      },
+      {
+        category: "Hållbart Jordbruk",
+        questions: [
+          { points: 100, q: "What kallas odling utan konstgödsel och kemikalier?", a: "Ekologiskt jordbruk." },
+          { points: 200, q: "Varför är bin och insekter livsviktiga för maten?", a: "De pollinerar växter så frukter och grönsaker kan växa." },
+          { points: 300, q: "Varför är monokultur (att odla bara en gröda) farligt?", a: "En sjukdom eller skadedjur kan förstöra hela skörden." },
+          { points: 400, q: "Vad kallas det att växla grödor på samma fält olika år?", a: "Växtföljd (eller växelbruk)." },
+          { points: 500, q: "Vad kallas växternas samarbete med svampar i jorden?", a: "Mykorrhiza." }
+        ]
+      },
+      {
+        category: "Matsvinn",
+        questions: [
+          { points: 100, q: "Var sker största matsvinnet i Sverige?", a: "Hemma i hushållen." },
+          { points: 200, q: "Vad är skillnaden på 'Bäst-före' och 'Sista förbrukningsdag'?", a: "Bäst före = kvalitet (kan ätas), Sista förbrukningsdag = säkerhet." },
+          { points: 300, q: "Hur mycket av all mat i världen slängs?", a: "Ungefär en tredjedel (ca 30-33%)." },
+          { points: 400, q: "Varför är matsvinn en stor klimatbov?", a: "All energi, mark och vatten för att odla maten används i onödan." },
+          { points: 500, q: "Vilken kraftig växthusgas bildas när mat ruttnar på soptippar?", a: "Metangas." }
+        ]
+      },
+      {
+        category: "Näring & Kropp",
+        questions: [
+          { points: 100, q: "Vilket näringsämne i bönor och kött är kroppens byggstenar?", a: "Protein." },
+          { points: 200, q: "Vad innebär begreppet 'dold hunger'?", a: "Att man blir mätt på kalorier, men maten saknar vitaminer/mineraler." },
+          { points: 300, q: "Vilket mineral behövs för att blodet ska transportera syre?", a: "Järn." },
+          { points: 400, q: "Vad menas med att ett livsmedel är 'näringstätt'?", a: "Mycket näring per kalori." },
+          { points: 500, q: "Vad innebär 'stunting' hos barn pga näringsbrist?", a: "Hämmad tillväxt (barnet blir kort och utvecklas långsammare)." }
+        ]
+      },
+      {
+        category: "Globala Utmaningen",
+        questions: [
+          { points: 100, q: "Vilken världsdel drabbas mest av hunger?", a: "Afrika." },
+          { points: 200, q: "Nämn två orsaker till ökad hunger (förutom fattigdom).", a: "Klimatförändringar och krig/konflikter." },
+          { points: 300, q: "Vad betyder märkningen 'Fairtrade'?", a: "Bönder får skäligt betalt och bra arbetsvillkor." },
+          { points: 400, q: "Hur påverkar extremväder småbönder?", a: "Torka dödar skördar, översvämningar sköljer bort näringsrik jord." },
+          { points: 500, q: "När bördig mark blir öken kallas det för...", a: "Ökenspridning." }
+        ]
+      }
+    ];
+
+    function startGame() {
+      playClickSound();
+      document.getElementById('intro-screen').classList.add('hidden');
+      document.getElementById('game-container').classList.remove('hidden');
+      buildBoard();
+    }
+
+    function buildBoard() {
+      const board = document.getElementById('jeopardy-board');
+      board.innerHTML = '';
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+          const category = jeopardyData[c];
+          const question = category.questions[r];
+          const qId = `${c}-${r}`;
+          const isPlayed = playedQuestions[qId];
+
+          const button = document.createElement('button');
+          button.type = 'button';
+          
+          if (isPlayed) {
+            button.className = 'bg-stone-200 border border-stone-300 text-stone-400 font-extrabold text-xl py-6 rounded-xl cursor-not-allowed line-through flex justify-center items-center shadow-inner select-none';
+            button.innerHTML = `<span>${question.points}</span>`;
+            button.disabled = true;
+          } else {
+            button.className = 'bg-earth-50 hover:bg-forest-50 border-2 border-stone-200 hover:border-forest-400 text-forest-800 hover:text-forest-950 font-black text-2xl py-6 rounded-xl transition-all shadow-sm hover:shadow active:scale-95 flex flex-col justify-center items-center gap-1';
+            button.innerHTML = `<span class="text-xs font-bold text-clay-600 tracking-wider">MÅL 2</span><span>${question.points}</span>`;
+            button.onclick = () => openQuestion(c, r);
+          }
+          board.appendChild(button);
+        }
+      }
+      updateProgress();
+    }
+
+    function updateScores() {
+      document.getElementById('score-potatis').innerText = scores.potatis;
+      document.getElementById('score-tomat').innerText = scores.tomat;
+      document.getElementById('score-hallon').innerText = scores.hallon;
+      document.getElementById('score-jordgubbe').innerText = scores.jordgubbe;
+    }
+
+    function adjustScore(team, amount) { playClickSound(); scores[team] += amount; updateScores(); }
+
+    function openQuestion(catIndex, qIndex) {
+      playClickSound();
+      const q = jeopardyData[catIndex].questions[qIndex];
+      activeQuestion = { catIndex, qIndex, points: q.points };
+
+      document.getElementById('modal-category-text').innerText = jeopardyData[catIndex].category;
+      document.getElementById('modal-value-text').innerText = `${q.points} Poäng`;
+      document.getElementById('modal-question-text').innerText = q.q;
+      document.getElementById('modal-answer-text').innerText = q.a;
+
+      document.getElementById('answer-container').classList.add('hidden');
+      document.getElementById('show-answer-btn').classList.remove('hidden');
+
+      const modal = document.getElementById('question-modal');
+      modal.classList.remove('hidden');
+      setTimeout(() => document.getElementById('modal-content').classList.replace('scale-95', 'scale-100'), 50);
+    }
+
+    function toggleAnswer() {
+      playClickSound();
+      document.getElementById('answer-container').classList.remove('hidden');
+      document.getElementById('show-answer-btn').classList.add('hidden');
+    }
+
+    function closeQuestionModal() {
+      playClickSound();
+      document.getElementById('modal-content').classList.replace('scale-100', 'scale-95');
+      setTimeout(() => document.getElementById('question-modal').classList.add('hidden'), 150);
+    }
+
+    // Ger poäng men stänger INTE rutan automatisk nu, så flera kan få poäng!
+    function rewardTeam(team) {
+      if (!activeQuestion) return;
+      playSuccessSound(); 
+      scores[team] += activeQuestion.points; 
+      updateScores(); 
+    }
+
+    function penalizeTeam(team) {
+      if (!activeQuestion) return;
+      playErrorSound(); 
+      scores[team] -= activeQuestion.points; 
+      updateScores();
+    }
+
+    function markAsPlayed() {
+      if (!activeQuestion) return;
+      playedQuestions[`${activeQuestion.catIndex}-${activeQuestion.qIndex}`] = true;
+      closeQuestionModal(); buildBoard(); checkGameOver();
+    }
+
+    function updateProgress() {
+      document.getElementById('progress-text').innerText = `${Object.keys(playedQuestions).length} av 25 frågor besvarade`;
+    }
+
+    function checkGameOver() {
+      if (Object.keys(playedQuestions).length === 25) setTimeout(showWinnerScreen, 1000);
+    }
+
+    function showWinnerScreen() {
+      const sortedTeams = Object.keys(scores).map(key => {
+        return { name: key, score: scores[key], emoji: { potatis: '🥔', tomat: '🍅', hallon: '🌸', jordgubbe: '🍓' }[key] };
+      }).sort((a, b) => b.score - a.score);
+
+      const listContainer = document.getElementById('final-scoreboard');
+      listContainer.innerHTML = '';
+      sortedTeams.forEach((t, i) => {
+        const medal = ['🥇 ', '🥈 ', '🥉 ', '🎖️ '][i];
+        const row = document.createElement('div');
+        row.className = `flex justify-between items-center p-3 rounded-xl border ${i === 0 ? 'bg-forest-100 border-forest-300 font-bold text-forest-950' : 'bg-white border-stone-200 text-stone-800'}`;
+        row.innerHTML = `<div class="flex items-center gap-2"><span class="text-lg">${medal}</span><span class="text-xl">${t.emoji}</span><span class="capitalize">Lag ${t.name}</span></div><span class="font-extrabold text-lg">${t.score} poäng</span>`;
+        listContainer.appendChild(row);
+      });
+      document.getElementById('winner-modal').classList.remove('hidden');
+    }
+
+    function resetGame() {
+      playClickSound();
+      scores = { potatis: 0, tomat: 0, hallon: 0, jordgubbe: 0 };
+      playedQuestions = {}; activeQuestion = null; updateScores(); buildBoard();
+      document.getElementById('winner-modal').classList.add('hidden');
+      document.getElementById('intro-screen').classList.remove('hidden');
+      document.getElementById('game-container').classList.add('hidden');
+    }
+
+    function openInfoModal() { playClickSound(); document.getElementById('info-modal').classList.remove('hidden'); }
+    function closeInfoModal() { playClickSound(); document.getElementById('info-modal').classList.add('hidden'); }
+  </script>
+</body>
+</html>
