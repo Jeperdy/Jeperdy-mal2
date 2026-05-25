@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeopardy: Globala målet 2</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #d04b36; /* Globala målet 2:s färg */
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        p.intro {
+            font-size: 1.1rem;
+            color: #a0a0ba;
+            margin-bottom: 25px;
+        }
+
+        /* Poängtavla för lagen */
+        .teams-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto 30px auto;
+            flex-wrap: wrap;
+        }
+
+        .team-box {
+            background-color: #162447;
+            border: 2px solid #41415a;
+            border-radius: 8px;
+            padding: 10px 15px;
+            min-width: 160px;
+            transition: border-color 0.3s;
+        }
+
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        /* Unika färger för lagens namn */
+        #team-box-1 .team-name { color: #ff4d6d; } /* Jordgubbe */
+        #team-box-2 .team-name { color: #ff758f; } /* Hallon */
+        #team-box-3 .team-name { color: #e9c46a; } /* Potatis */
+        #team-box-4 .team-name { color: #ff4a4a; } /* Tomat */
+
+        .team-score {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .score-controls {
+            margin-top: 5px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .score-btn {
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 3px;
+            border: none;
+        }
+        .btn-plus { background-color: #28a745; color: white; }
+        .btn-minus { background-color: #dc3545; color: white; }
+
+        /* Spelplanen */
+        .jeopardy-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .category-header {
+            background-color: #d04b36;
+            color: white;
+            padding: 15px 5px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 45px;
+        }
+
+        .clue-card {
+            background-color: #0f3460;
+            color: #e43f5a;
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 20px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #162447;
+        }
+
+        .clue-card:hover {
+            background-color: #162447;
+            transform: scale(1.03);
+            color: #fff;
+        }
+
+        .clue-card.disabled {
+            background-color: #1a1a2e;
+            color: #41415a;
+            border: 2px dashed #41415a;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Modal (Popup) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-content {
+            background-color: #162447;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 650px;
+            width: 90%;
+            border: 3px solid #d04b36;
+            box-shadow: 0 0 20px rgba(208, 75, 54, 0.5);
+        }
+
+        .modal h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .answer-text {
+            font-size: 1.4rem;
+            color: #4eed96;
+            margin: 20px 0;
+            display: none;
+            font-style: italic;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .team-award-buttons {
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        button.main-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #e43f5a;
+            color: white;
+            transition: background 0.2s;
+        }
+        button.main-btn:hover { background-color: #ca344b; }
+
+        .award-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .award-group {
+            background: #0f3460;
+            padding: 8px;
+            border-radius: 5px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .award-label {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .award-btn {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-correct { background-color: #28a745; }
+        .btn-wrong { background-color: #dc3545; }
+        .btn-close { background-color: #6c757d; }
+    </style>
+</head>
+<body>
+
+    <h1>Jeopardy: Globala målet 2</h1>
+    <p class="intro">Klicka på en poängruta. När ett lag svarat, fördelar ni poängen med knapparna under rätt svar!</p>
+
+    <div class="teams-container">
+        <div class="team-box" id="team-box-1">
+            <div class="team-name">Jordgubbe</div>
+            <div class="team-score" id="score-1">0</div>
+            <div class="score-controls">
+                <button class="score-btn btn-plus" onclick="adjustScore(1, 100)">+100</button>
+                <button class="score-btn btn-minus" onclick="adjustScore(1, -100)">-100</button>
+            </div>
+        </div>
+        <div class="team-box" id="team-box-2">
+            <div class="team-name">Hallon</div>
+            <div class="team-score" id="score-2">0</div>
+            <div class="score-controls">
+                <button class="score-btn btn-plus" onclick="adjustScore(2, 100)">+100</button>
+                <button class="score-btn btn-minus" onclick="adjustScore(2, -100)">-100</button>
+            </div>
+        </div>
+        <div class="team-box" id="team-box-3">
+            <div class="team-name">Potatis</div>
+            <div class="team-score" id="score-3">0</div>
+            <div class="score-controls">
+                <button class="score-btn btn-plus" onclick="adjustScore(3, 100)">+100</button>
+                <button class="score-btn btn-minus" onclick="adjustScore(3, -100)">-100</button>
+            </div>
+        </div>
+        <div class="team-box" id="team-box-4">
+            <div class="team-name">Tomat</div>
+            <div class="team-score" id="score-4">0</div>
+            <div class="score-controls">
+                <button class="score-btn btn-plus" onclick="adjustScore(4, 100)">+100</button>
+                <button class="score-btn btn-minus" onclick="adjustScore(4, -100)">-100</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="jeopardy-board">
+        <div class="category-header">Grunderna</div>
+        <div class="category-header">Mat & Miljö</div>
+        <div class="category-header">Matsvinn</div>
+        <div class="category-header">Hunger i världen</div>
+
+        <div class="clue-card" onclick="openClue(this, 'Grunderna', 100, 'Detta är det officiella svenska namnet på Globala mål nummer 2.', 'Vad är Ingen hunger?')">100</div>
+        <div class="clue-card" onclick="openClue(this, 'Mat & Miljö', 100, 'Det kallas det när man odlar mat utan kemiska bekämpningsmedel och konstgödsel.', 'Vad är ekologiskt jordbruk?')">100</div>
+        <div class="clue-card" onclick="openClue(this, 'Matsvinn', 100, 'I denna del av livsmedelskedjan sker det absolut mesta matsvinnet i rika länder som Sverige.', 'Vad är hushållen?')">100</div>
+        <div class="clue-card" onclick="openClue(this, 'Hunger i världen', 100, 'Detta år är satt som deadline för när de Globala målen ska vara uppnådda.', 'Vad är år 2030?')">100</div>
+
+        <div class="clue-card" onclick="openClue(this, 'Grunderna', 200, 'Begreppet för när en person lider av brist på livsviktiga näringsämnen, även om de får i sig tillräckligt med kalorier.', 'Vad är felnäring?')">200</div>
+        <div class="clue-card" onclick="openClue(this, 'Mat & Miljö', 200, 'Så stor del står världens livsmedelssystem för när det gäller globala växthusgasutsläpp.', 'Vad är en tredjedel?')">200</div>
+        <div class="clue-card" onclick="openClue(this, 'Matsvinn', 200, 'Denna märkning garanterar bara kvalitet och smak till ett visst datum, inte att maten blir giftig efteråt.', 'Vad är bäst före-datum?')">200</div>
+        <div class="clue-card" onclick="openClue(this, 'Hunger i världen', 200, 'Detta fenomen, ofta pga krig, är den största drivkraften bakom akut hungersnöd idag.', 'Vad är konflikter?')">200</div>
+
+        <div class="clue-card" onclick="openClue(this, 'Grunderna', 300, 'Detta kallas det tillstånd då alla människor hela tiden har tillgång till tillräcklig och näringsrik mat.', 'Vad är livsmedelsförsörjning / livsmedelstrygghet?')">300</div>
+        <div class="clue-card" onclick="openClue(this, 'Mat & Miljö', 300, 'Detta biologiska system av flygande insekter är nödvändigt för en tredjedel av maten vi äter.', 'Vad är pollinatörer?')">300</div>
+        <div class="clue-card" onclick="openClue(this, 'Matsvinn', 300, 'Dessa tre mänskliga sinnen bör du använda i ordning för att se om maten går att äta.', 'Vad är titta, lukta och smaka?')">300</div>
+        <div class="clue-card" onclick="openClue(this, 'Hunger i världen', 300, 'Detta kallas cirkeln där fattiga inte har råd med mat, blir svaga och därmed förblir fattiga.', 'Vad är fattigdomsfällan?')">300</div>
+
+        <div class="clue-card" onclick="openClue(this, 'Grunderna', 400, 'Globala målet 2 handlar inte bara om mat, utan också om att främja denna typ av jordbruk.', 'Vad är ett hållbart jordbruk?')">400</div>
+        <div class="clue-card" onclick="openClue(this, 'Mat & Miljö', 400, 'Det kallas metoden där man odlar olika grödor på samma fält över tid för att hålla jorden frisk.', 'Vad är växelbruk?')">400</div>
+        <div class="clue-card" onclick="openClue(this, 'Matsvinn', 400, 'Ungefär så här stor andel av all mat som produceras i världen slängs tyvärr i onödan.', 'Vad är en tredjedel?')">400</div>
+        <div class="clue-card" onclick="openClue(this, 'Hunger i världen', 400, 'Detta FN-organ är världens största humanitära organisation som bekämpar hunger vid kriser.', 'Vad är WFP?')">400</div>
+
+        <div class="clue-card" onclick="openClue(this, 'Grunderna', 500, 'Detta tillstånd drabbar barn som under lång tid fått för lite näring, vilket hämmar deras växt.', 'Vad är kronisk undernäring / stunting?')">500</div>
+        <div class="clue-card" onclick="openClue(this, 'Mat & Miljö', 500, 'Denna typ av köttproduktion kräver generellt sett mest resurser i form av vatten och mark per kilo.', 'Vad är nötkött?')">500</div>
+        <div class="clue-card" onclick="openClue(this, 'Matsvinn', 500, 'Förutom mat innebär svinn ett enormt slöseri på denna naturresurs som går åt vid bevattning.', 'Vad är sötvatten?')">500</div>
+        <div class="clue-card" onclick="openClue(this, 'Hunger i världen', 500, 'Denna kontinent har procentuellt sett drabbats hårdast av hunger de senaste åren.', 'Vad är Afrika?')">500</div>
+
+        <div class="clue-card" onclick="openClue(this, 'Grunderna', 600, 'Detta kallas det delmål som handlar om att spara och bevara unika fröer och växtsorter för framtiden.', 'Vad är att skydda den genetiska mångfalden?')">600</div>
+        <div class="clue-card" onclick="openClue(this, 'Mat & Miljö', 600, 'Denna odlingsteknik kombinerar träd och buskar med grödor för att binda kol och skydda marken.', 'Vad är agroskogsbruk?')">600</div>
+        <div class="clue-card" onclick="openClue(this, 'Matsvinn', 600, 'Det kallas det när mat förstörs under skörd eller transport innan den ens når butikshyllorna.', 'Vad är livsmedelsförluster?')">600</div>
+        <div class="clue-card" onclick="openClue(this, 'Hunger i världen', 600, 'Denna typ av extrem brist på mat leder till akut, livshotande viktnedgång hos främst barn.', 'Vad är akut undernäring / utmärgling?')">600</div>
+
+        <div class="clue-card" onclick="openClue(this, 'Grunderna', 700, 'I vilket globalt och juridiskt bindande avtal slås rätten till mat fast som en grundläggande mänsklig rättighet?', 'Vad är FN:s deklaration om de mänskliga rättigheterna?')">700</div>
+        <div class="clue-card" onclick="openClue(this, 'Mat & Miljö', 700, 'Vad kallas det när överanvändning av konstgödsel läcker ut i sjöar och hav och orsakar syrebrist och algblomning?', 'Vad är övergödning?')">700</div>
+        <div class="clue-card" onclick="openClue(this, 'Matsvinn', 700, 'Vilket globalt delmål (nummer) kräver att det globala matsvinnet per person i butik- och konsumentled ska halveras till 2030?', 'Vad är Delmål 12.3?')">700</div>
+        <div class="clue-card" onclick="openClue(this, 'Hunger i världen', 700, 'Vad kallas det index som årligen mäter och spårar hunger på global, regional och nationell nivå världen över?', 'Vad är Global Hunger Index / GHI?')">700</div>
+    </div>
+
+    <div id="clue-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-category" style="color: #d04b36; margin-top: 0;">Kategori</h3>
+            <h2 id="modal-question">Fråga här...</h2>
+            <div id="modal-answer" class="answer-text">Rätt svar...</div>
+            
+            <div class="modal-buttons">
+                <button id="reveal-btn" class="main-btn" onclick="revealAnswer()">Visa rätt svar</button>
+                
+                <div id="team-controls" class="team-award-buttons">
+                    <p style="width:100%; margin-bottom:12px; color:#a0a0ba;">Rätta lagets svar:</p>
+                    
+                    <div class="award-grid">
+                        <div class="award-group">
+                            <span class="award-label" style="color: #ff4d6d;">Jordgubbe:</span>
+                            <div>
+                                <button class="award-btn btn-correct" onclick="givePoints(1, true)">Rätt</button>
+                                <button class="award-btn btn-wrong" onclick="givePoints(1, false)">Fel</button>
+                            </div>
+                        </div>
+                        <div class="award-group">
+                            <span class="award-label" style="color: #ff758f;">Hallon:</span>
+                            <div>
+                                <button class="award-btn btn-correct" onclick="givePoints(2, true)">Rätt</button>
+                                <button class="award-btn btn-wrong" onclick="givePoints(2, false)">Fel</button>
+                            </div>
+                        </div>
+                        <div class="award-group">
+                            <span class="award-label" style="color: #e9c46a;">Potatis:</span>
+                            <div>
+                                <button class="award-btn btn-correct" onclick="givePoints(3, true)">Rätt</button>
+                                <button class="award-btn btn-wrong" onclick="givePoints(3, false)">Fel</button>
+                            </div>
+                        </div>
+                        <div class="award-group">
+                            <span class="award-label" style="color: #ff4a4a;">Tomat:</span>
+                            <div>
+                                <button class="award-btn btn-correct" onclick="givePoints(4, true)">Rätt</button>
+                                <button class="award-btn btn-wrong" onclick="givePoints(4, false)">Fel</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="award-btn btn-close" onclick="closeModalWithoutScore()" style="width: 100%; padding: 10px;">Ingen svarade rätt (Stäng)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scores = { 1: 0, 2: 0, 3: 0, 4: 0 };
+        let currentPoints = 0;
+        let activeCard = null;
+
+        function openClue(card, category, points, question, answer) {
+            if (card.classList.contains('disabled')) return;
+            
+            activeCard = card;
+            currentPoints = parseInt(points);
+
+            document.getElementById('modal-category').innerText = category + " - " + points + " Poäng";
+            document.getElementById('modal-question').innerText = question;
+            document.getElementById('modal-answer').innerText = answer;
+
+            document.getElementById('modal-answer').style.display = 'none';
+            document.getElementById('reveal-btn').style.display = 'inline-block';
+            document.getElementById('team-controls').style.display = 'none';
+
+            document.getElementById('clue-modal').style.display = 'flex';
+        }
+
+        function revealAnswer() {
+            document.getElementById('modal-answer').style.display = 'block';
+            document.getElementById('reveal-btn').style.display = 'none';
+            document.getElementById('team-controls').style.display = 'block';
+        }
+
+        function givePoints(teamNum, isCorrect) {
+            if (isCorrect) {
+                scores[teamNum] += currentPoints;
+            } else {
+                scores[teamNum] -= currentPoints;
+            }
+            updateScoreBoard();
+            closeCard();
+        }
+
+        function closeModalWithoutScore() {
+            closeCard();
+        }
+
+        function closeCard() {
+            document.getElementById('clue-modal').style.display = 'none';
+            if (activeCard) {
+                activeCard.classList.add('disabled');
+                activeCard.onclick = null;
+                activeCard.innerText = "X";
+            }
+        }
+
+        function adjustScore(teamNum, amount) {
+            scores[teamNum] += parseInt(amount);
+            updateScoreBoard();
+        }
+
+        function updateScoreBoard() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('score-' + i).innerText = scores[i];
+            }
+        }
+    </script>
+</body>
+</html>
